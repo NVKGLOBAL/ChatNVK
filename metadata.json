@@ -1,0 +1,11 @@
+{
+  "name": "ChatNVK",
+  "description": "A detailed onboarding chat app with curated AI personas, offline WebGPU simulation, voice notes, multi-agent groups, parallel wide-research, and interactive data visualizations.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
