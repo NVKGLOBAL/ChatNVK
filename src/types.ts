@@ -1,19 +1,116 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
+ * 
+ * CHATNVK v3.0 - SOVEREIGN INTELLIGENCE WORKSPACE TYPES
  */
 
 export enum SenderType {
   USER = "USER",
   AI = "AI",
-  SYSTEM = "SYSTEM"
+  SYSTEM = "SYSTEM",
+  AGENT = "AGENT"
 }
 
 export enum MessageStatus {
   SENDING = "SENDING",
   SENT = "SENT",
   DELIVERED = "DELIVERED",
-  READ = "READ"
+  READ = "READ",
+  VERIFYING = "VERIFYING",
+  ERROR = "ERROR"
+}
+
+export type AgentRoleType = 
+  | "RESEARCHER" 
+  | "ANALYST" 
+  | "ENGINEER" 
+  | "CRITIC" 
+  | "PLANNER" 
+  | "VERIFIER" 
+  | "ARCHITECT" 
+  | "SYNTHESIZER" 
+  | "EXECUTOR";
+
+export type CouncilMode = "SEQUENTIAL" | "PARALLEL" | "ADVERSARIAL";
+
+export type MemoryClassType = 
+  | "WORKING" 
+  | "SESSION" 
+  | "LONG_TERM" 
+  | "KNOWLEDGE" 
+  | "AGENT" 
+  | "SYSTEM";
+
+export type ToolPermission = 
+  | "READ_FILES" 
+  | "WRITE_FILES" 
+  | "EXECUTE_CODE" 
+  | "NETWORK_ACCESS" 
+  | "BROWSER_ACCESS" 
+  | "DATABASE_ACCESS" 
+  | "SYSTEM_COMMANDS";
+
+export interface ToolDefinition {
+  id: string;
+  name: string;
+  description: string;
+  requiredPermission: ToolPermission;
+  isEnabled: boolean;
+  parametersSchema?: any;
+}
+
+export interface ToolExecutionRecord {
+  id: string;
+  toolId: string;
+  toolName: string;
+  permission: ToolPermission;
+  input: any;
+  output: any;
+  status: "pending" | "approved" | "denied" | "success" | "failed";
+  timestamp: string;
+  durationMs?: number;
+}
+
+export interface VerificationStep {
+  step: "PLAN" | "EXECUTE" | "OBSERVE" | "CHECK" | "CRITIQUE" | "CORRECT" | "VERIFY" | "FINAL";
+  status: "pending" | "running" | "passed" | "flagged";
+  agentRole: AgentRoleType;
+  details: string;
+  timestamp: string;
+}
+
+export interface AuditTrailEvent {
+  id: string;
+  timestamp: string;
+  eventType: 
+    | "TASK_CREATED" 
+    | "PLAN_CREATED" 
+    | "AGENT_STARTED" 
+    | "TOOL_REQUESTED" 
+    | "TOOL_APPROVED" 
+    | "TOOL_EXECUTED" 
+    | "OBSERVATION_RECEIVED" 
+    | "CRITIQUE_CREATED" 
+    | "CORRECTION_APPLIED" 
+    | "VERIFICATION_COMPLETED" 
+    | "FINAL_RESPONSE" 
+    | "MEMORY_UPDATED";
+  agentRole?: AgentRoleType;
+  payload: any;
+  verificationPassed?: boolean;
+}
+
+export interface MemoryEntry {
+  id: string;
+  classType: MemoryClassType;
+  key: string;
+  value: string;
+  confidence: number;
+  createdAt: string;
+  updatedAt: string;
+  sourceSessionId?: string;
+  tags?: string[];
 }
 
 export interface MediaContent {
@@ -37,6 +134,7 @@ export interface Message {
   senderName: string;
   senderAvatar: string;
   senderType: SenderType;
+  agentRole?: AgentRoleType;
   text: string;
   timestamp: string;
   status: MessageStatus;
@@ -44,13 +142,18 @@ export interface Message {
   isTranscript?: boolean;
   isThought?: boolean;
   thoughtContent?: string;
-  chunks?: string[]; // Split bursts
+  chunks?: string[];
+  verificationSteps?: VerificationStep[];
+  toolExecutions?: ToolExecutionRecord[];
+  modelUsed?: string;
+  runtimeSpeedTokensPerSec?: number;
 }
 
 export interface AIPartner {
   id: string;
   name: string;
   title: string;
+  role?: AgentRoleType;
   avatar: string;
   color: string;
   specialty: string;
@@ -78,25 +181,61 @@ export interface ChatSession {
   isGroup: boolean;
   avatar: string;
   partnerIds: string[];
+  activeAgentRoles?: AgentRoleType[];
+  councilMode?: CouncilMode;
   messages: Message[];
   theme: ThemeType;
+  updatedAt?: string;
+  isPinned?: boolean;
+  tags?: string[];
 }
 
-export interface WideResearchNode {
+export type ModelFormat = "GGUF" | "Safetensors" | "Ollama" | "WebGPU" | "LocalAI" | "Local-Daemon";
+
+export interface LocalModelInfo {
   id: string;
   name: string;
-  role: "planner" | "explorer" | "verifier" | "summarizer";
-  status: "idle" | "active" | "completed" | "failed";
-  progress: number;
-  currentTask?: string;
-  findings?: string[];
+  format: ModelFormat;
+  quantization: string;
+  contextWindow: string;
+  parameterSize: string;
+  vramRequiredGb: number;
+  ramRequiredGb: number;
+  filePath?: string;
+  isLoaded: boolean;
+  isDefault?: boolean;
+  capabilities: {
+    toolCalling: boolean;
+    reasoning: boolean;
+    vision: boolean;
+    codeExecution: boolean;
+  };
+  inferenceSpeedTokensPerSec?: number;
 }
 
-export interface SandboxCommand {
-  command: string;
-  output: string;
-  timestamp: string;
-  status: "running" | "success" | "error";
+export interface AIModelSpec {
+  id: string;
+  name: string;
+  provider: "local" | "ollama" | "gguf" | "webgpu";
+  description: string;
+  contextWindow: string;
+  badge?: string;
+  isDefault?: boolean;
+  requiresApiKey?: boolean;
+  envKeyName?: string;
+}
+
+export interface RuntimeHealth {
+  status: "ONLINE" | "OFFLINE" | "DEGRADED";
+  engine: "node-llama-cpp" | "Ollama" | "WebGPU" | "Local-Sovereign-Core";
+  activeModelId: string | null;
+  loadedModelsCount: number;
+  vramUsedMb: number;
+  vramTotalMb: number;
+  ramUsedMb: number;
+  ramTotalMb: number;
+  gpuAcceleration: boolean;
+  offlineMode: boolean;
 }
 
 export interface CodeProjectFile {
@@ -123,29 +262,28 @@ export interface CodeProject {
   };
 }
 
-export interface ArtifactItem {
-  id: string;
-  title: string;
-  author: string;
-  type: "dashboard" | "code" | "svg" | "document" | "app";
-  desc: string;
-  code?: string;
-  htmlPreview?: string;
-  files?: CodeProjectFile[];
-  githubUrl?: string;
+export interface SandboxCommand {
+  command: string;
+  output: string;
+  timestamp: string;
+  status: "running" | "success" | "error";
+  exitCode?: number;
+  durationMs?: number;
 }
 
-export type AIModelProvider = "google" | "openai" | "anthropic" | "deepseek" | "groq" | "ollama" | "local";
-
-export interface AIModelSpec {
+export interface WideResearchNode {
   id: string;
   name: string;
-  provider: AIModelProvider;
-  description: string;
-  contextWindow: string;
-  badge?: string;
-  isDefault?: boolean;
-  requiresApiKey?: boolean;
-  envKeyName?: string;
+  role: "planner" | "explorer" | "verifier" | "summarizer";
+  status: "idle" | "active" | "completed" | "failed";
+  progress: number;
+  currentTask?: string;
+  findings?: string[];
+  sources?: {
+    url: string;
+    title: string;
+    relevanceScore: number;
+    contradictionFlag: boolean;
+    retrievedAt: string;
+  }[];
 }
-

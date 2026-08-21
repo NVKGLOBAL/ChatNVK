@@ -30,7 +30,7 @@ import { AVAILABLE_MODELS } from "../lib/llm-router";
 
 interface NVKOSTopBarProps {
   profile: UserProfile;
-  activeTab: "messenger" | "research" | "sandbox" | "webgpu";
+  activeTab: "messenger" | "research" | "sandbox" | "webgpu" | "sovereign";
   localModelEnabled: boolean;
   disclaimerAcknowledged: boolean;
   activeThemeId: ThemePaletteId;

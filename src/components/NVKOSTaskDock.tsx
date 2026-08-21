@@ -15,12 +15,13 @@ import {
   Scale, 
   Sparkles,
   Zap,
-  Layers
+  Layers,
+  Shield
 } from "lucide-react";
 
 interface NVKOSTaskDockProps {
-  activeTab: "messenger" | "research" | "sandbox" | "webgpu";
-  onNavigateTab: (tab: "messenger" | "research" | "sandbox" | "webgpu") => void;
+  activeTab: "messenger" | "research" | "sandbox" | "webgpu" | "sovereign";
+  onNavigateTab: (tab: "messenger" | "research" | "sandbox" | "webgpu" | "sovereign") => void;
   onOpenSpotlight: () => void;
   onOpenWalkthrough: () => void;
   onOpenDisclaimer: () => void;
@@ -36,6 +37,15 @@ export default function NVKOSTaskDock({
   localModelEnabled
 }: NVKOSTaskDockProps) {
   const dockApps = [
+    {
+      id: "sovereign",
+      title: "Sovereign Workspace",
+      subtitle: "GGUF / Verification / Council",
+      icon: Shield,
+      color: "from-indigo-600 via-purple-700 to-cyan-800 text-cyan-200 shadow-indigo-500/50",
+      activeColor: "bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.9)]",
+      isTab: true
+    },
     {
       id: "messenger",
       title: "Authentic Chat Core",

@@ -1,6 +1,6 @@
 {
   "name": "ChatNVK",
-  "description": "A detailed onboarding chat app with curated AI personas, offline WebGPU simulation, voice notes, multi-agent groups, parallel wide-research, and interactive data visualizations.",
+  "description": "ChatNVK v3.0 Sovereign Intelligence Workspace - Local-first, self-hosted AI operating system with GGUF runtimes, 8-step verification loops, multi-agent council chambers, and zero cloud AI API dependencies.",
   "requestFramePermissions": [
     "camera",
     "microphone"

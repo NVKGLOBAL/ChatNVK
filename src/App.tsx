@@ -41,14 +41,15 @@ import OSWindowShell from "./components/OSWindowShell";
 import SpotlightOSLauncher from "./components/SpotlightOSLauncher";
 import NeuralWaveCanvas, { ThemePaletteId, THEME_PALETTES } from "./components/NeuralWaveCanvas";
 import AIModelSwapperModal from "./components/AIModelSwapperModal";
+import WorkspaceShell from "./components/workspace/WorkspaceShell";
 
 export default function App() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [activePartners, setActivePartners] = useState<AIPartner[]>([]);
-  const [activeSystemTab, setActiveSystemTab] = useState<"messenger" | "research" | "sandbox" | "webgpu">("messenger");
-  const [localModelEnabled, setLocalModelEnabled] = useState<boolean>(false);
+  const [activeSystemTab, setActiveSystemTab] = useState<"messenger" | "research" | "sandbox" | "webgpu" | "sovereign">("sovereign");
+  const [localModelEnabled, setLocalModelEnabled] = useState<boolean>(true);
   const [selectedModelId, setSelectedModelId] = useState<string>(() => {
-    return localStorage.getItem("chatnvk_model_id") || "gemini-3.5-flash";
+    return localStorage.getItem("chatnvk_model_id") || "llama-3.3-8b-instruct-q4";
   });
   const [activeThemeId, setActiveThemeId] = useState<ThemePaletteId>(() => {
     return (localStorage.getItem("chatnvk_theme_id") as ThemePaletteId) || "matrix-cyan";
@@ -254,6 +255,19 @@ export default function App() {
                     >
                       <AgentSandbox />
                     </OSWindowShell>
+                  </motion.div>
+                )}
+
+                {activeSystemTab === "sovereign" && (
+                  <motion.div
+                    key="sovereign-view"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.15 }}
+                    className="h-full w-full rounded-2xl overflow-hidden border border-indigo-500/30 shadow-2xl"
+                  >
+                    <WorkspaceShell />
                   </motion.div>
                 )}
 
